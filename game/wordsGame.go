@@ -4,20 +4,11 @@ import (
 	"math/rand"
 	"os"
 	"time"
-    "log"
 
 	"github.com/ataha322/typing/res"
-	"golang.org/x/term"
 )
 
 func StartWordsLoop(num int) {
-	//raw-dog this terminal
-	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer term.Restore(int(os.Stdin.Fd()), oldState)
-
 	var g Game
 	chars := pickRandomWords(num)
 	g.init(chars)
