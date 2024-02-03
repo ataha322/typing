@@ -97,9 +97,8 @@ func (g *Game) backspace() {
     if g.curr_index == 0 {
         return
     }
-	fmt.Printf("\x1b[%dm%s\x1b[0m", WHITE, string(g.text[g.curr_index]))
-	fmt.Printf("\x1b[2D")
     g.curr_index--
+	fmt.Printf("\x1b[1D")
 	fmt.Printf("\x1b[%dm%s\x1b[0m", WHITE, string(g.text[g.curr_index]))
 	fmt.Printf("\x1b[1D")
 }
