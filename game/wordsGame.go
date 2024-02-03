@@ -1,14 +1,28 @@
 package game
 
 import (
+	"fmt"
+	"log"
 	"math/rand"
 	"os"
 	"time"
 
 	"github.com/ataha322/typing/res"
+	"golang.org/x/term"
 )
 
 func StartWordsLoop(num int) {
+	//raw-dog this terminal
+	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer term.Restore(int(os.Stdin.Fd()), oldState)
+
+    //change cursor to a blinking underline
+	fmt.Printf("\x1b[3 q")
+	defer fmt.Printf("\x1b[0 q")
+
 	var g Game
 	chars := pickRandomWords(num)
 	g.init(chars)
@@ -20,6 +34,7 @@ func StartWordsLoop(num int) {
 
         if g.curr_index == 0 {
             g.start = time.Now()
+            g.word_count = 0
         }
 
 		if isPrintable(char) {
@@ -28,6 +43,9 @@ func StartWordsLoop(num int) {
 			g.backspace()
 		} else if isCtrlC(char) {
 			break
+        } else if isCtrlR(char) {
+            defer StartWordsLoop(num)
+            break
 		} else {
 			//noop
 		}

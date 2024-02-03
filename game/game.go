@@ -16,6 +16,7 @@ const (
 	RED   = 31
 
 	CTRLC     = 3
+	CTRLR     = 18
 	BACKSPACE = 127
 )
 
@@ -70,6 +71,10 @@ func isCtrlC(char byte) bool {
 	return char == CTRLC
 }
 
+func isCtrlR(char byte) bool {
+	return char == CTRLR
+}
+
 func (g *Game) printable(char byte) {
 	r := rune(char)
 	correct := g.text[g.curr_index]
@@ -89,11 +94,14 @@ func (g *Game) printable(char byte) {
 }
 
 func (g *Game) backspace() {
+    if g.curr_index == 0 {
+        return
+    }
 	fmt.Printf("\x1b[%dm%s\x1b[0m", WHITE, string(g.text[g.curr_index]))
 	fmt.Printf("\x1b[2D")
-	if g.curr_index > 0 {
-		g.curr_index--
-	}
+    g.curr_index--
+	fmt.Printf("\x1b[%dm%s\x1b[0m", WHITE, string(g.text[g.curr_index]))
+	fmt.Printf("\x1b[1D")
 }
 
 func (g *Game) printResults() {
@@ -111,6 +119,6 @@ func (g *Game) printResults() {
 	fmt.Printf("\x1b[0G")
 	fmt.Printf("Accuracy: %d%%\n", int(accuracy*100))
 	fmt.Printf("\x1b[0G")
-	fmt.Printf("Characters typed: %d\n", g.typed_chars)
+	fmt.Printf("Keypresses: %d\n", g.typed_chars)
 	fmt.Printf("\x1b[0G")
 }
