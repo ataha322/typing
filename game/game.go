@@ -29,20 +29,16 @@ type Game struct {
 	typed_chars int
 	word_count  int
 	curr_index  int
-	num_lines   int
 	mistyped    int
+
+	num_lines int
+	curr_line int
 
 	start time.Time
 }
 
 func (g *Game) init(text []rune) {
 	g.text = text
-	var err error
-	g.width, g.height, err = term.GetSize(int(os.Stdin.Fd()))
-	if err != nil {
-		log.Fatal(err)
-	}
-	g.num_lines = (len(g.text) + g.width - 1) / g.width
 
 	g.total_chars = len(text)
 	g.word_count = 0
@@ -52,10 +48,22 @@ func (g *Game) init(text []rune) {
 
 	g.start = time.Now()
 
+	g.updateDimensions()
+
 	fmt.Printf("\x1b[%dm%s\x1b[0m", WHITE, string(g.text))
 	fmt.Println()
 	fmt.Printf("\x1b[%dF", g.num_lines) //move cursor up num_lines,
 	//0th column. thus, go to beginning of the text
+}
+
+func (g *Game) updateDimensions() {
+	var err error
+	g.width, g.height, err = term.GetSize(int(os.Stdin.Fd()))
+	if err != nil {
+		log.Fatal(err)
+	}
+	g.num_lines = (len(g.text) + g.width - 1) / g.width
+	g.curr_line = g.curr_index / g.width
 }
 
 func isPrintable(char byte) bool {
@@ -141,7 +149,7 @@ func (g *Game) printResults() {
 		accuracy = 1.0 - float64(g.mistyped)/float64(g.typed_chars)
 	}
 
-	fmt.Printf("\x1b[1024E") //move cursor to bottom line
+	fmt.Printf("\x1b[%dE", g.num_lines-g.curr_line) //move cursor to bottom line
 	fmt.Printf("WPM: %d\n", int(wpm))
 	fmt.Printf("\x1b[0G") // move cursor to 0th column
 	fmt.Printf("Accuracy: %d%%\n", int(accuracy*100))

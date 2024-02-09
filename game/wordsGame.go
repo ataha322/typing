@@ -31,6 +31,8 @@ func StartWordsLoop(num int) {
 		os.Stdin.Read(b)
 		char := b[0]
 
+		g.updateDimensions() //in case terminal resizes
+
 		if g.curr_index == 0 {
 			g.start = time.Now()
 			g.word_count = 0
