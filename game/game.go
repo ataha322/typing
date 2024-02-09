@@ -78,6 +78,7 @@ func isCtrlR(char byte) bool {
 func (g *Game) printable(char byte) {
 	r := rune(char)
 	correct := g.text[g.curr_index]
+    
 	var color int
 	if r == correct {
 		color = GREEN
@@ -85,7 +86,11 @@ func (g *Game) printable(char byte) {
 		g.mistyped++
 		color = RED
 	}
+
 	fmt.Printf("\x1b[%dm%s\x1b[0m", color, string(correct))
+    if (g.isLastCol()) {
+        fmt.Printf("\x1b[1E")
+    }
 	if g.curr_index+1 == g.total_chars || g.text[g.curr_index+1] == ' ' {
 		g.word_count++
 	}
@@ -97,10 +102,32 @@ func (g *Game) backspace() {
     if g.curr_index == 0 {
         return
     }
-    g.curr_index--
-	fmt.Printf("\x1b[1D")
-	fmt.Printf("\x1b[%dm%s\x1b[0m", WHITE, string(g.text[g.curr_index]))
-	fmt.Printf("\x1b[1D")
+    if g.isFirstCol() {
+        g.curr_index--
+        fmt.Printf("\x1b[1F")
+        fmt.Printf("\x1b[%dG", g.width)
+        fmt.Printf("\x1b[%dm%s\x1b[0m", WHITE, string(g.text[g.curr_index]))
+        fmt.Printf("\x1b[%dG", g.width)
+    } else {
+        g.curr_index--
+        fmt.Printf("\x1b[1D")
+        fmt.Printf("\x1b[%dm%s\x1b[0m", WHITE, string(g.text[g.curr_index]))
+        fmt.Printf("\x1b[1D")
+    }
+}
+
+func (g *Game) isFirstCol() bool {
+    if g.curr_index % g.width == 0 {
+        return true;
+    }
+    return false;
+}
+
+func (g *Game) isLastCol() bool {
+    if g.curr_index % g.width == g.width-1 {
+        return true
+    }
+    return false
 }
 
 func (g *Game) printResults() {
