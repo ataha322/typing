@@ -28,8 +28,8 @@ var wordsCmd = &cobra.Command{
 			if err != nil {
 				log.Fatal(err)
 			}
-            if num <= 0 {
-                log.Fatal("Invalid number of words")
+            if num <= 0 || num > 500 {
+                log.Fatal("Error: need 0 < N <= 500")
             }
 			game.StartWordsLoop(num)
         default:
