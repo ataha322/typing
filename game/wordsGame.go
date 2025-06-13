@@ -11,13 +11,15 @@ import (
 	"golang.org/x/term"
 )
 
-func StartWordsLoop(num int) {
+func StartWordsLoop(num int) int {
 	//raw-dog this terminal
 	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer term.Restore(int(os.Stdin.Fd()), oldState)
+
+	ret := 1 // return 0 to stop, 1 to play again
 
 	fmt.Printf("\x1b[3 q")       //change cursor to a blinking underline
 	defer fmt.Printf("\x1b[0 q") //restore default cursor when finished
@@ -43,9 +45,10 @@ func StartWordsLoop(num int) {
 		} else if isBackspace(char) {
 			g.backspace()
 		} else if isCtrlC(char) {
+			ret = 0
 			break
 		} else if isCtrlR(char) {
-			defer StartWordsLoop(num)
+			ret = 1
 			break
 		} else {
 			//noop
@@ -53,6 +56,7 @@ func StartWordsLoop(num int) {
 	}
 
 	g.printResults()
+	return ret
 }
 
 func pickRandomWords(num int) []rune {

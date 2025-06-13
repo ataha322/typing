@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"os"
-
 	"github.com/spf13/cobra"
 )
 
@@ -11,7 +10,7 @@ var rootCmd = &cobra.Command{
 	Use:   "typing",
 	Short: "Typing game",
 	Long: "Typing game with several modes " +
-		"that measure average typing speeed.",
+	"that measure average typing speeed.",
 	// Run: func(cmd *cobra.Command, args []string) { },
 }
 
