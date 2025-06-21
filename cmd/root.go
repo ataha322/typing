@@ -11,7 +11,9 @@ var rootCmd = &cobra.Command{
 	Short: "Typing game",
 	Long: "Typing game with several modes " +
 	"that measure average typing speeed.",
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		wordsCmd.Run(cmd, []string{"15"})
+	},
 }
 
 func Execute() {
